@@ -35,4 +35,11 @@ if (image.length === 0) {
 
 mkdirSync(outDir, { recursive: true });
 writeFileSync(destination, image);
+
+// Verify the copy: read the destination back and confirm it holds exactly
+// the bytes written, so a truncated or failed write cannot pass silently.
+const written = readFileSync(destination);
+if (written.length !== image.length) {
+  throw new Error(`entry.png copy is incomplete: wrote ${image.length} bytes, read back ${written.length} at ${destination}`);
+}
 console.log(`wrote ${destination} (${image.length} bytes)`);
